@@ -12,7 +12,7 @@ import (
 	"github.com/sshravan/gnark-example/circuit/mimc"
 )
 
-func driver(circuit, assignment frontend.Circuit) {
+func driver(circuit, assignment frontend.Circuit) bool {
 
 	// Compiles the circuit into a R1CS
 	ccs, err := frontend.Compile(ecc.BN254, r1cs.NewBuilder, circuit)
@@ -36,12 +36,13 @@ func driver(circuit, assignment frontend.Circuit) {
 	err = groth16.Verify(proof, vk, publicWitness)
 	assertNoError(err)
 	fmt.Println("Proof verified")
+	return true
 }
 
 func main() {
-	var cublic_circuit cubic.Circuit
+	var cubic_circuit cubic.Circuit
 	cubic_assignment := cubic.Circuit{X: 3, Y: 35}
-	driver(&cublic_circuit, &cubic_assignment)
+	driver(&cubic_circuit, &cubic_assignment)
 
 	var mimc_circuit mimc.Circuit
 	mimc_assignment := mimc.Circuit{
