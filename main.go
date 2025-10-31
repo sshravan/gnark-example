@@ -13,7 +13,6 @@ import (
 	"github.com/consensys/gnark/frontend/cs/scs"
 	"github.com/consensys/gnark/test/unsafekzg"
 	"github.com/sshravan/gnark-example/circuit/cubic"
-	"github.com/sshravan/gnark-example/circuit/mimc"
 )
 
 func driverGroth16(circuit, assignment frontend.Circuit) bool {
@@ -21,6 +20,12 @@ func driverGroth16(circuit, assignment frontend.Circuit) bool {
 	// Compiles the circuit into a R1CS
 	ccs, err := frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, circuit)
 	assertNoError(err)
+
+	scs := ccs.(*cs.R1CS)
+	constraints := scs.GetR1Cs()
+	for _, r1c := range constraints {
+		fmt.Println(r1c.String(scs))
+	}
 
 	// Groth16: Setup
 	pk, vk, err := groth16.Setup(ccs)
@@ -80,13 +85,13 @@ func main() {
 	driverGroth16(&cubic_circuit, &cubic_assignment)
 	driverPlonk(&cubic_circuit, &cubic_assignment)
 
-	var mimc_circuit mimc.Circuit
-	mimc_assignment := mimc.Circuit{
-		PreImage: "16130099170765464552823636852555369511329944820189892919423002775646948828469",
-		Hash:     "12886436712380113721405259596386800092738845035233065858332878701083870690753"}
+	// var mimc_circuit mimc.Circuit
+	// mimc_assignment := mimc.Circuit{
+	// 	PreImage: "16130099170765464552823636852555369511329944820189892919423002775646948828469",
+	// 	Hash:     "12886436712380113721405259596386800092738845035233065858332878701083870690753"}
 
-	driverGroth16(&mimc_circuit, &mimc_assignment)
-	driverPlonk(&mimc_circuit, &mimc_assignment)
+	// driverGroth16(&mimc_circuit, &mimc_assignment)
+	// driverPlonk(&mimc_circuit, &mimc_assignment)
 }
 
 func assertNoError(err error) {
