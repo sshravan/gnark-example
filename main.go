@@ -15,7 +15,7 @@ import (
 func driver(circuit, assignment frontend.Circuit) bool {
 
 	// Compiles the circuit into a R1CS
-	ccs, err := frontend.Compile(ecc.BN254, r1cs.NewBuilder, circuit)
+	ccs, err := frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, circuit)
 	assertNoError(err)
 
 	// Groth16: Setup
@@ -23,7 +23,7 @@ func driver(circuit, assignment frontend.Circuit) bool {
 	assertNoError(err)
 
 	// Witness definition
-	witness, err := frontend.NewWitness(assignment, ecc.BN254)
+	witness, err := frontend.NewWitness(assignment, ecc.BN254.ScalarField())
 	assertNoError(err)
 
 	// Groth16: Prove
@@ -47,7 +47,7 @@ func main() {
 	var mimc_circuit mimc.Circuit
 	mimc_assignment := mimc.Circuit{
 		PreImage: "16130099170765464552823636852555369511329944820189892919423002775646948828469",
-		Hash:     "8674594860895598770446879254410848023850744751986836044725552747672873438975"}
+		Hash:     "12886436712380113721405259596386800092738845035233065858332878701083870690753"}
 	driver(&mimc_circuit, &mimc_assignment)
 }
 
